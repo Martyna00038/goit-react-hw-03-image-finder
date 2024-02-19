@@ -43,8 +43,7 @@ export default class Featcher extends Component {
   };
 
   loadMore = () => {
-    const { query, page } = this.state;
-    this.fetchData(query, page);
+    this.setState(prev => ({ activePage: prev.activePage + 1 }));
   };
 
   openModal = imageUrl => {
@@ -60,9 +59,19 @@ export default class Featcher extends Component {
       isModalOpen: false,
     });
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    const prevQuery = prevState.searchQuery;
+    const nextQuery = this.state.searchQuery;
+    const prevPage = prevState.activePage;
+    const nextPage = this.state.activePage;
+    if (prevQuery !== nextQuery || prevPage !== nextPage) {
+      this.fetchData();
+    }
+  }
+
   render() {
     const { images, isLoading } = this.state;
-
     return (
       <div>
         {isLoading && <Loader />}
