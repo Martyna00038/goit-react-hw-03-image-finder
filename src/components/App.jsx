@@ -32,7 +32,7 @@ export default class Featcher extends Component {
           page === 1
             ? response.data.hits
             : [...prevState.images, ...response.data.hits],
-        page: page + 1,
+        activePage: page + 1,
         query,
       }));
     } catch (error) {
