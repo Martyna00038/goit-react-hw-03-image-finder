@@ -13,6 +13,8 @@ export default class Featcher extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      searchQuery: '',
+      activePage: 1,
       images: [],
       selectedImageUrl: '',
       isModalOpen: false,
@@ -32,8 +34,6 @@ export default class Featcher extends Component {
           page === 1
             ? response.data.hits
             : [...prevState.images, ...response.data.hits],
-        activePage: page + 1,
-        query,
       }));
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -60,13 +60,17 @@ export default class Featcher extends Component {
     });
   };
 
+  onFormSubmit = newSearchQuery => {
+    this.setState({ searchQuery: newSearchQuery, images: [], activePage: 1 });
+  };
+
   componentDidUpdate(prevProps, prevState) {
     const prevQuery = prevState.searchQuery;
     const nextQuery = this.state.searchQuery;
     const prevPage = prevState.activePage;
     const nextPage = this.state.activePage;
     if (prevQuery !== nextQuery || prevPage !== nextPage) {
-      this.fetchData();
+      this.fetchData(nextQuery, nextPage);
     }
   }
 
@@ -75,7 +79,7 @@ export default class Featcher extends Component {
     return (
       <div>
         {isLoading && <Loader />}
-        <Searchbar onSubmit={this.fetchData} />
+        <Searchbar onSubmit={this.onFormSubmit} />
         <ImageGallery images={images} onClick={this.openModal} />
         {images.length > 0 && !isLoading && (
           <Button onClick={this.loadMore} disabled={false} />
